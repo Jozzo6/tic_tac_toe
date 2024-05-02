@@ -40,6 +40,8 @@ class GameViewModel extends ChangeNotifier {
   late Property<ViewState> joinGameState =
       Property(ViewState.idle, notifyListeners);
   late Property<User?> playerOnTurn = Property(null, notifyListeners);
+  late Property<ViewState> makeMoveState =
+      Property(ViewState.idle, notifyListeners);
 
   Future<void> init(int gameId) async {
     try {
@@ -119,6 +121,10 @@ class GameViewModel extends ChangeNotifier {
 
   Future<void> makeMove(int row, int col) async {
     try {
+      if (makeMoveState.value == ViewState.loading) {
+        return;
+      }
+      makeMoveState.value = ViewState.loading;
       List<List<int?>> board = game.value.board;
       if (game.value.status != 'progress' ||
           !canMakeMove.value ||
@@ -129,6 +135,8 @@ class GameViewModel extends ChangeNotifier {
       await getGame(game.value.id);
     } catch (e) {
       throw e.toString();
+    } finally {
+      makeMoveState.value = ViewState.idle;
     }
   }
 
