@@ -20,6 +20,11 @@ class GameRepository {
     return GamesResponse.fromJson(response.data);
   }
 
+  Future<Game> getGame(int gameID) async {
+    final response = await _dio.get('/games/$gameID/');
+    return Game.fromJson(response.data);
+  }
+
   Future<Game> createGame() async {
     final response = await _dio.post('/games/');
     return Game.fromJson(response.data);
@@ -27,5 +32,15 @@ class GameRepository {
 
   Future<void> joinGame(int gameID) async {
     await _dio.post('/games/$gameID/join/');
+  }
+
+  Future<void> makeMove(int gameID, int row, int col) async {
+    await _dio.post(
+      '/games/$gameID/move/',
+      data: {
+        'row': row,
+        'col': col,
+      },
+    );
   }
 }

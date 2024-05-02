@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tic_tac_toe/core/enums/view_state.dart';
 import 'package:tic_tac_toe/ui/views/login/login_view_model.dart';
 
 class LoginView extends StatefulWidget {
@@ -13,9 +14,9 @@ class _LoginViewState extends State<LoginView> {
   final LoginViewModel _model = LoginViewModel();
   final _formKey = GlobalKey<FormState>();
 
-  void login() {
+  void login() async {
     if (_formKey.currentState!.validate()) {
-      _model.login();
+      await _model.login();
     }
   }
 
@@ -44,6 +45,11 @@ class _LoginViewState extends State<LoginView> {
   Widget form() {
     return Consumer<LoginViewModel>(
       builder: (context, value, _) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (value.state.value == ViewState.success) {
+            Navigator.of(context).pushReplacementNamed('/home');
+          }
+        });
         return Form(
           key: _formKey,
           child: Column(

@@ -52,6 +52,8 @@ class AuthService extends ChangeNotifier {
 
   Future<dynamic> logout() async {
     try {
+      SharedPreferences instance = await SharedPreferences.getInstance();
+      await instance.remove('auth');
       await _authRepository.logout();
       authData.value = null;
       state.value = AuthState.unauthenticated;

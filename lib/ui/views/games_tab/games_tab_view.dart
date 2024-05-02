@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tic_tac_toe/core/enums/view_state.dart';
 import 'package:tic_tac_toe/core/models/game.dart';
 import 'package:tic_tac_toe/core/models/user.dart';
+import 'package:tic_tac_toe/ui/views/game/game_view.dart';
 import 'package:tic_tac_toe/ui/views/games_tab/games_tab_view_model.dart';
 
 class GamesTabView extends StatefulWidget {
@@ -40,6 +41,13 @@ class _GamesTabViewState extends State<GamesTabView> {
         scrollController.position.maxScrollExtent) {
       _loadMoreGames();
     }
+  }
+
+  void viewGame(Game game) {
+    showBottomSheet(
+      context: context,
+      builder: (context) => GameView(game: game),
+    );
   }
 
   @override
@@ -107,59 +115,62 @@ class _GamesTabViewState extends State<GamesTabView> {
   }
 
   Widget gameListItem(Game game) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  children: [
-                    const Icon(Icons.close),
-                    Text(game.firstPlayer.username),
-                  ],
-                ),
-                Column(
-                  children: [
-                    const Icon(Icons.circle_outlined),
-                    if (game.secondPlayer is User)
-                      Text(game.secondPlayer!.username)
-                    else
-                      const Text('Empty slot'),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  game.status,
-                  textScaler: const TextScaler.linear(1.3),
-                ),
-                if (game.secondPlayer == null)
-                  TextButton(
-                    onPressed: () => print('Join'),
-                    child: const Text('Join'),
-                  ),
-                if (game.winner is User)
-                  Row(
+    return InkWell(
+      onTap: () => viewGame(game),
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
                     children: [
-                      const Icon(Icons.emoji_events_outlined),
-                      Text(
-                        game.winner!.username,
-                      ),
+                      const Icon(Icons.close),
+                      Text(game.firstPlayer.username),
                     ],
                   ),
-              ],
-            ),
-          ],
+                  Column(
+                    children: [
+                      const Icon(Icons.circle_outlined),
+                      if (game.secondPlayer is User)
+                        Text(game.secondPlayer!.username)
+                      else
+                        const Text('Empty slot'),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    game.status,
+                    textScaler: const TextScaler.linear(1.3),
+                  ),
+                  if (game.secondPlayer == null)
+                    TextButton(
+                      onPressed: () => print('Join'),
+                      child: const Text('Join'),
+                    ),
+                  if (game.winner is User)
+                    Row(
+                      children: [
+                        const Icon(Icons.emoji_events_outlined),
+                        Text(
+                          game.winner!.username,
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

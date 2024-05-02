@@ -3,7 +3,7 @@ import 'package:tic_tac_toe/core/models/user.dart';
 class Game {
   final int id;
   final DateTime created;
-  final dynamic board;
+  final List<List<int?>> board;
   final User? winner;
   final User firstPlayer;
   final User? secondPlayer;
@@ -23,13 +23,35 @@ class Game {
     return Game(
       id: json['id'],
       created: DateTime.parse(json['created']),
-      board: json['board'],
+      board: (json['board'] as List)
+          .map((e) => (e as List).map((i) => i as int?).toList())
+          .toList(),
       winner: json['winner'] != null ? User.fromJson(json['winner']) : null,
       firstPlayer: User.fromJson(json['first_player']),
       secondPlayer: json['second_player'] != null
           ? User.fromJson(json['second_player'])
           : null,
       status: json['status'],
+    );
+  }
+
+  Game copyWith({
+    int? id,
+    DateTime? created,
+    List<List<int?>>? board,
+    User? winner,
+    User? firstPlayer,
+    User? secondPlayer,
+    String? status,
+  }) {
+    return Game(
+      id: id ?? this.id,
+      created: created ?? this.created,
+      board: board ?? this.board,
+      winner: winner ?? this.winner,
+      firstPlayer: firstPlayer ?? this.firstPlayer,
+      secondPlayer: secondPlayer ?? this.secondPlayer,
+      status: status ?? this.status,
     );
   }
 

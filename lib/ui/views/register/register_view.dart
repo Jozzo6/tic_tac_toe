@@ -82,7 +82,9 @@ class _RegisterViewState extends State<RegisterView> {
                 },
               ),
               value.state.value == ViewState.loading
-                  ? SpinKitCircle()
+                  ? SpinKitCircle(
+                      color: Theme.of(context).primaryColor,
+                    )
                   : ElevatedButton(
                       onPressed: register,
                       child: const Text('Register'),

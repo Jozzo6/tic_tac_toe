@@ -35,7 +35,7 @@ class _HomeViewState extends State<HomeView> {
         child: Center(
           child: TextButton(
             onPressed: () async {
-              _authService.logout();
+              logout();
             },
             child: const Text('Logout'),
           ),
