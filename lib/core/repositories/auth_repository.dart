@@ -5,36 +5,24 @@ class AuthRepository {
   final Dio _dio = DioClient().dio;
 
   Future<dynamic> login(String username, String password) async {
-    try {
-      final response = await _dio.post('/login/', data: {
-        'username': username,
-        'password': password,
-      });
+    final response = await _dio.post('/login/', data: {
+      'username': username,
+      'password': password,
+    });
 
-      return response.data;
-    } catch (e) {
-      throw e.toString();
-    }
+    return response.data;
   }
 
   Future<dynamic> register(String username, String password) async {
-    try {
-      final response = await _dio.post('/register/', data: {
-        'username': username,
-        'password': password,
-      });
+    final response = await _dio.post('/register/', data: {
+      'username': username,
+      'password': password,
+    });
 
-      return response.data;
-    } catch (e) {
-      throw e.toString();
-    }
+    return response.data;
   }
 
   Future<void> logout() async {
-    try {
-      await _dio.post('/logout/');
-    } on Exception catch (e) {
-      throw e.toString();
-    }
+    await _dio.post('/logout/');
   }
 }
