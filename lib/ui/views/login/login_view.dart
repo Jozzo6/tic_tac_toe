@@ -18,6 +18,7 @@ class _LoginViewState extends State<LoginView> {
     try {
       if (_formKey.currentState!.validate()) {
         await _model.login();
+        Navigator.of(context).pushReplacementNamed('/home');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -94,10 +95,13 @@ class _LoginViewState extends State<LoginView> {
                   return null;
                 },
               ),
-              ElevatedButton(
-                onPressed: login,
-                child: const Text('Login'),
-              ),
+              if (value.state.value == ViewState.loading)
+                const CircularProgressIndicator()
+              else
+                ElevatedButton(
+                  onPressed: login,
+                  child: const Text('Login'),
+                ),
               TextButton(
                 onPressed: register,
                 child: const Text('Don\'t have an account? Register'),

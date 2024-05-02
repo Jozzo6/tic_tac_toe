@@ -78,13 +78,7 @@ class AuthService extends ChangeNotifier {
 
   Future<void> register(String username, password) async {
     try {
-      dynamic res = await _authRepository.register(username, password);
-      AuthData authData = AuthData.fromJson(res);
-
-      _dioClient.setToken(authData.token);
-      await saveAuthData(authData);
-      this.authData.value = authData;
-      state.value = AuthState.authenticated;
+      await _authRepository.register(username, password);
     } catch (e) {
       throw e.toString();
     }

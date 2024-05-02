@@ -14,7 +14,6 @@ class RegisterViewModel extends ChangeNotifier {
     try {
       state.value = ViewState.loading;
       await _service.register(username.value, password.value);
-      state.value = ViewState.success;
     } catch (e) {
       throw e.toString();
     } finally {
