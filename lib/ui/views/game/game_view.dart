@@ -1,11 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tic_tac_toe/core/enums/view_state.dart';
 import 'package:tic_tac_toe/core/models/game.dart';
 import 'package:tic_tac_toe/ui/views/game/game_view_model.dart';
-import 'package:tic_tac_toe/ui/views/games_tab/games_tab_view_model.dart';
 
 class GameView extends StatefulWidget {
   final Game game;
@@ -107,33 +104,7 @@ class _GameViewState extends State<GameView> {
                 'On turn: ${value.playerOnTurn.value?.username}',
                 textScaler: const TextScaler.linear(1.3),
               ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  children: [
-                    const Icon(
-                      Icons.close,
-                      size: 30,
-                    ),
-                    Text(value.game.value.firstPlayer.username),
-                  ],
-                ),
-                Column(
-                  children: [
-                    const Icon(
-                      Icons.circle_outlined,
-                      size: 30,
-                    ),
-                    if (value.game.value.secondPlayer != null)
-                      Text(value.game.value.secondPlayer!.username)
-                    else
-                      const Text('Waiting for a player..'),
-                  ],
-                ),
-              ],
-            ),
+            playersInfo(),
             const SizedBox(height: 20),
             if (value.canJoin.value)
               ElevatedButton(
@@ -142,37 +113,7 @@ class _GameViewState extends State<GameView> {
                 },
                 child: const Text('Join'),
               ),
-            if (value.game.value.winner != null)
-              Column(
-                children: [
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.emoji_events_outlined,
-                        size: 30,
-                      ),
-                      Text(
-                        'Winner',
-                        textScaler: TextScaler.linear(1.3),
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    value.game.value.winner!.username,
-                    textScaler: const TextScaler.linear(1.3),
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ],
-              ),
-            if (value.game.value.status == 'finished' &&
-                value.game.value.winner == null)
-              const Text(
-                'Draw!',
-                textScaler: TextScaler.linear(1.3),
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
+            results(),
           ],
         ),
       );
@@ -193,6 +134,79 @@ class _GameViewState extends State<GameView> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget playersInfo() {
+    return Consumer<GameViewModel>(builder: (context, value, _) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Column(
+            children: [
+              const Icon(
+                Icons.close,
+                size: 30,
+              ),
+              Text(value.game.value.firstPlayer.username),
+            ],
+          ),
+          Column(
+            children: [
+              const Icon(
+                Icons.circle_outlined,
+                size: 30,
+              ),
+              if (value.game.value.secondPlayer != null)
+                Text(value.game.value.secondPlayer!.username)
+              else
+                const Text('Waiting for a player..'),
+            ],
+          ),
+        ],
+      );
+    });
+  }
+
+  Widget results() {
+    return Consumer<GameViewModel>(
+      builder: (context, value, _) {
+        if (value.game.value.winner != null) {
+          return Column(
+            children: [
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.emoji_events_outlined,
+                    size: 30,
+                  ),
+                  Text(
+                    'Winner',
+                    textScaler: TextScaler.linear(1.3),
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+              Text(
+                value.game.value.winner!.username,
+                textScaler: const TextScaler.linear(1.3),
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
+            ],
+          );
+        }
+        if (value.game.value.status == 'finished' &&
+            value.game.value.winner == null) {
+          return const Text(
+            'Draw!',
+            textScaler: TextScaler.linear(1.3),
+            style: TextStyle(fontWeight: FontWeight.w600),
+          );
+        }
+        return const SizedBox();
+      },
     );
   }
 }
