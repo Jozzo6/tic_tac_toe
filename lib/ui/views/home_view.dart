@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe/core/services/auth_service.dart';
 import 'package:tic_tac_toe/ui/views/games_tab/games_tab_view.dart';
+import 'package:tic_tac_toe/ui/views/ranking_tab/ranking_tab_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -15,7 +16,7 @@ class _HomeViewState extends State<HomeView> {
 
   static const List<Widget> _tabs = [
     GamesTabView(),
-    Center(child: Text('Tab 2')),
+    RankingTabView(),
   ];
 
   void logout() async {

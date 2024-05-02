@@ -96,7 +96,7 @@ class _GamesTabViewState extends State<GamesTabView> {
                 Column(
                   children: [
                     SpinKitCircle(color: Theme.of(context).colorScheme.primary),
-                    Text('Loading more games...')
+                    const Text('Loading more games...')
                   ],
                 )
             ],
