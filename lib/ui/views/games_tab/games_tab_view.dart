@@ -45,6 +45,19 @@ class _GamesTabViewState extends State<GamesTabView> {
     }
   }
 
+  Future<void> _applyFilter(String value) async {
+    try {
+      await _viewModel.getGames();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red[300],
+        ),
+      );
+    }
+  }
+
   void _onScroll() {
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
@@ -106,9 +119,19 @@ class _GamesTabViewState extends State<GamesTabView> {
           controller: scrollController,
           child: Column(
             children: [
+              filterWidget(),
               ...value.filteredGames.value
                   .map<Widget>((game) => gameListItem(game))
                   .toList(),
+              if (value.next == null)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  child: Text(
+                    'No more games to load',
+                    textScaler: TextScaler.linear(1.3),
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
               if (value.loadMoreState.value == ViewState.loading)
                 Column(
                   children: [
@@ -123,8 +146,48 @@ class _GamesTabViewState extends State<GamesTabView> {
     );
   }
 
+  Widget filterWidget() {
+    return Consumer<GamesTabViewModel>(builder: (context, value, child) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          const Text(
+            'Filter by status',
+            style: TextStyle(fontWeight: FontWeight.w600),
+            textScaler: TextScaler.linear(1.25),
+          ),
+          DropdownButton<String>(
+            value: value.filterByStatus.value,
+            onChanged: (String? newValue) {
+              value.filterByStatus.value = newValue!;
+              _applyFilter(newValue);
+            },
+            items: const [
+              DropdownMenuItem<String>(
+                value: '',
+                child: Text('All'),
+              ),
+              DropdownMenuItem<String>(
+                value: 'progress',
+                child: Text('In progress'),
+              ),
+              DropdownMenuItem<String>(
+                value: 'finished',
+                child: Text('Finished'),
+              ),
+              DropdownMenuItem<String>(
+                value: 'open',
+                child: Text('Open'),
+              ),
+            ],
+          ),
+        ],
+      );
+    });
+  }
+
   Widget gameListItem(Game game) {
-    return InkWell(
+    return GestureDetector(
       onTap: () => viewGame(game),
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -162,12 +225,7 @@ class _GamesTabViewState extends State<GamesTabView> {
                     game.status,
                     textScaler: const TextScaler.linear(1.3),
                   ),
-                  if (game.secondPlayer == null)
-                    TextButton(
-                      onPressed: () => print('Join'),
-                      child: const Text('Join'),
-                    ),
-                  if (game.winner is User)
+                  if (game.winner != null)
                     Row(
                       children: [
                         const Icon(Icons.emoji_events_outlined),
@@ -175,6 +233,11 @@ class _GamesTabViewState extends State<GamesTabView> {
                           game.winner!.username,
                         ),
                       ],
+                    ),
+                  if (game.status == 'finished' && game.winner == null)
+                    const Text(
+                      'Draw',
+                      style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                 ],
               ),

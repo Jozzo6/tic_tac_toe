@@ -5,11 +5,12 @@ import 'package:tic_tac_toe/core/models/game.dart';
 class GameRepository {
   final Dio _dio = DioClient().dio;
 
-  Future<GamesResponse> getGames() async {
+  Future<GamesResponse> getGames(String? status) async {
     final response = await _dio.get(
       '/games/',
       queryParameters: {
         'limit': 20,
+        'status': status,
       },
     );
     return GamesResponse.fromJson(response.data);

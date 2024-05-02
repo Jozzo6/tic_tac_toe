@@ -15,6 +15,7 @@ class GamesTabViewModel extends ChangeNotifier {
   );
   late Property<ViewState> loadMoreState =
       Property(ViewState.idle, notifyListeners);
+  late Property<String> filterByStatus = Property('', notifyListeners);
 
   late List<Game> _allGames;
   String? next = '';
@@ -22,7 +23,7 @@ class GamesTabViewModel extends ChangeNotifier {
   Future<void> getGames() async {
     try {
       state.value = ViewState.loading;
-      GamesResponse res = await _gameRepository.getGames();
+      GamesResponse res = await _gameRepository.getGames(filterByStatus.value);
       next = res.next;
       _allGames = res.results;
       filteredGames.value = _allGames;
