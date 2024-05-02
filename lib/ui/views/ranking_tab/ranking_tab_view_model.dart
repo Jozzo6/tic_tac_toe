@@ -17,6 +17,7 @@ class RankingTabViewModel extends ChangeNotifier {
       state.value = ViewState.loading;
       final response = await _userRepository.getUsers();
       users.value = response.results;
+      next = response.next;
       state.value = ViewState.idle;
     } catch (e) {
       state.value = ViewState.error;
@@ -34,7 +35,9 @@ class RankingTabViewModel extends ChangeNotifier {
       users.value = [...users.value, ...res.results];
       loadMoreState.value = ViewState.idle;
     } catch (e) {
-      loadMoreState.value = ViewState.error;
+      throw e.toString();
+    } finally {
+      loadMoreState.value = ViewState.idle;
     }
   }
 }

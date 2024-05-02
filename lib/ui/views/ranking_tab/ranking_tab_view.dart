@@ -31,7 +31,16 @@ class _RankingTabViewState extends State<RankingTabView> {
   }
 
   Future<void> _loadMoreUsers() async {
-    await _viewModel.loadMoreUsers();
+    try {
+      await _viewModel.loadMoreUsers();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red[300],
+        ),
+      );
+    }
   }
 
   void _onScroll() {
@@ -74,7 +83,16 @@ class _RankingTabViewState extends State<RankingTabView> {
                     SpinKitCircle(color: Theme.of(context).colorScheme.primary),
                     const Text('Loading more users...')
                   ],
-                )
+                ),
+              if (value.next == null)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  child: Text(
+                    'No more rankings to load',
+                    textScaler: TextScaler.linear(1.3),
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
             ],
           ),
         );
