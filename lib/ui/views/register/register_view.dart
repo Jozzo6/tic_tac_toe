@@ -15,9 +15,19 @@ class _RegisterViewState extends State<RegisterView> {
   final RegisterViewModel _model = RegisterViewModel();
   final _formKey = GlobalKey<FormState>();
 
-  void register() {
-    if (_formKey.currentState!.validate()) {
-      _model.register();
+  void register() async {
+    try {
+      if (_formKey.currentState!.validate()) {
+        await _model.register();
+        Navigator.of(context).pushNamed('/login');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red[300],
+        ),
+      );
     }
   }
 

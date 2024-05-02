@@ -27,6 +27,32 @@ class _GameViewState extends State<GameView> {
     super.dispose();
   }
 
+  Future<void> makeMove(int row, int col) async {
+    try {
+      await _viewModel.makeMove(row, col);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occurred: ${e.toString()}'),
+          backgroundColor: Colors.red[300],
+        ),
+      );
+    }
+  }
+
+  Future<void> joinGame() async {
+    try {
+      await _viewModel.joinGame();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occurred: ${e.toString()}'),
+          backgroundColor: Colors.red[300],
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GameViewModel>.value(
@@ -42,10 +68,13 @@ class _GameViewState extends State<GameView> {
       if (value.initState.value == ViewState.loading) {
         return const Center(child: CircularProgressIndicator());
       } else if (value.initState.value == ViewState.error) {
-        return const Center(child: Text('Error'));
+        return errorWidget();
       } else {
         return Column(
-          children: [gameBoard(), gameInfo()],
+          children: [
+            gameBoard(),
+            gameInfo(),
+          ],
         );
       }
     });
@@ -67,9 +96,7 @@ class _GameViewState extends State<GameView> {
               int col = index % 3;
 
               return GestureDetector(
-                onTap: () {
-                  _viewModel.makeMove(row, col);
-                },
+                onTap: () => makeMove(row, col),
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border.all(),
@@ -108,9 +135,7 @@ class _GameViewState extends State<GameView> {
             const SizedBox(height: 20),
             if (value.canJoin.value)
               ElevatedButton(
-                onPressed: () {
-                  _viewModel.joinGame();
-                },
+                onPressed: () => joinGame(),
                 child: const Text('Join'),
               ),
             results(),
@@ -138,35 +163,37 @@ class _GameViewState extends State<GameView> {
   }
 
   Widget playersInfo() {
-    return Consumer<GameViewModel>(builder: (context, value, _) {
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            children: [
-              const Icon(
-                Icons.close,
-                size: 30,
-              ),
-              Text(value.game.value.firstPlayer.username),
-            ],
-          ),
-          Column(
-            children: [
-              const Icon(
-                Icons.circle_outlined,
-                size: 30,
-              ),
-              if (value.game.value.secondPlayer != null)
-                Text(value.game.value.secondPlayer!.username)
-              else
-                const Text('Waiting for a player..'),
-            ],
-          ),
-        ],
-      );
-    });
+    return Consumer<GameViewModel>(
+      builder: (context, value, _) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              children: [
+                const Icon(
+                  Icons.close,
+                  size: 30,
+                ),
+                Text(value.game.value.firstPlayer.username),
+              ],
+            ),
+            Column(
+              children: [
+                const Icon(
+                  Icons.circle_outlined,
+                  size: 30,
+                ),
+                if (value.game.value.secondPlayer != null)
+                  Text(value.game.value.secondPlayer!.username)
+                else
+                  const Text('Waiting for a player..'),
+              ],
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget results() {

@@ -24,7 +24,12 @@ class _HomeViewState extends State<HomeView> {
       await _authService.logout();
       Navigator.of(context).pushReplacementNamed('/login');
     } catch (e) {
-      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occurred: ${e.toString()}'),
+          backgroundColor: Colors.red[300],
+        ),
+      );
     }
   }
 

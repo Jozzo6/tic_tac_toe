@@ -19,7 +19,7 @@ class GamesTabViewModel extends ChangeNotifier {
   late List<Game> _allGames;
   String? next = '';
 
-  void getGames() async {
+  Future<void> getGames() async {
     try {
       state.value = ViewState.loading;
       GamesResponse res = await _gameRepository.getGames();
@@ -38,7 +38,7 @@ class GamesTabViewModel extends ChangeNotifier {
       await _gameRepository.createGame();
       await Future.delayed(const Duration(seconds: 5));
     } catch (e) {
-      createGameState.value = ViewState.error;
+      throw e.toString();
     } finally {
       createGameState.value = ViewState.idle;
     }
@@ -54,9 +54,10 @@ class GamesTabViewModel extends ChangeNotifier {
       next = res.next;
       _allGames.addAll(res.results);
       filteredGames.value = _allGames;
-      loadMoreState.value = ViewState.idle;
     } catch (e) {
-      loadMoreState.value = ViewState.error;
+      throw e.toString();
+    } finally {
+      loadMoreState.value = ViewState.idle;
     }
   }
 }

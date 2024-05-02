@@ -15,8 +15,17 @@ class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
 
   void login() async {
-    if (_formKey.currentState!.validate()) {
-      await _model.login();
+    try {
+      if (_formKey.currentState!.validate()) {
+        await _model.login();
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red[300],
+        ),
+      );
     }
   }
 

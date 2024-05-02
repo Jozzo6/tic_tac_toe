@@ -16,7 +16,9 @@ class LoginViewModel extends ChangeNotifier {
       await _service.login(username.value, password.value);
       state.value = ViewState.success;
     } catch (e) {
-      state.value = ViewState.error;
+      throw e.toString();
+    } finally {
+      state.value = ViewState.idle;
     }
   }
 }

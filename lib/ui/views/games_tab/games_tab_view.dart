@@ -33,7 +33,16 @@ class _GamesTabViewState extends State<GamesTabView> {
   }
 
   Future<void> _loadMoreGames() async {
-    await _viewModel.loadMoreGames();
+    try {
+      await _viewModel.loadMoreGames();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: Colors.red[300],
+        ),
+      );
+    }
   }
 
   void _onScroll() {

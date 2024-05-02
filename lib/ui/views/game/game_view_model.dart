@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:tic_tac_toe/core/enums/view_state.dart';
@@ -53,7 +52,6 @@ class GameViewModel extends ChangeNotifier {
       refreshGameData();
       initState.value = ViewState.idle;
     } catch (e) {
-      log(e.toString());
       initState.value = ViewState.error;
     }
   }
@@ -65,7 +63,6 @@ class GameViewModel extends ChangeNotifier {
         try {
           refreshState.value = ViewState.loading;
           await getGame(game.value.id);
-          print(game.value.status);
           if (game.value.status == 'finished') {
             t.cancel();
             return;
@@ -131,7 +128,7 @@ class GameViewModel extends ChangeNotifier {
       await _gameRepository.makeMove(game.value.id, row, col);
       await getGame(game.value.id);
     } catch (e) {
-      log(e.toString());
+      throw e.toString();
     }
   }
 
@@ -140,10 +137,10 @@ class GameViewModel extends ChangeNotifier {
       joinGameState.value = ViewState.loading;
       await _gameRepository.joinGame(game.value.id);
       await getGame(game.value.id);
-      joinGameState.value = ViewState.success;
     } catch (e) {
-      log(e.toString());
-      joinGameState.value = ViewState.error;
+      throw e.toString();
+    } finally {
+      joinGameState.value = ViewState.idle;
     }
   }
 }
